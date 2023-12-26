@@ -18,6 +18,7 @@ app.use(cors());
 app.use("/api/users", require("./routes/user.route"));
 app.use("/api/timelogs", require("./routes/timelog.route"));
 app.use("/api/goals", require("./routes/goal.route"));
+app.use("/api/stats", require("./routes/stats.route"));
 
 app.get("/", (req, res) => {
   console.log("Hello world");

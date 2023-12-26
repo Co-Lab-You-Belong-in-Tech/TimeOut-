@@ -6,7 +6,7 @@ const goalSchema = new mongoose.Schema({
   target: { type: Number, required: true },
   progress: { type: Number, default: 0 },
   // start date should be the date that the user set the goal or the first day/date of the month
-});
+}, { timestamps: true });
 
 const Goal = mongoose.model('Goal', goalSchema);
 

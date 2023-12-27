@@ -4,7 +4,8 @@ const userSchema = new mongoose.Schema({
   deviceId: { type: String, required: true, unique: true },
   timeLogs: [{ type: mongoose.Schema.Types.ObjectId, ref: 'timeLog' }],
   goals: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Goal' }],
-  timeAverage: { type: Number, default: 0 }
+  timeAverage: { type: Number, default: 0 },
+  timezone: { type: String, required: true },
 }, { timestamps: true });
 
 const User = mongoose.model('User', userSchema);

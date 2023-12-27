@@ -3,6 +3,7 @@ const dotenv = require("dotenv");
 const connectDB = require("./config/db");
 const path = require("path");
 const cors = require("cors");
+const { goalSchedule } = require("./jobs/goal.job");
 
 dotenv.config({ path: "./config/config.env" });
 connectDB();
@@ -13,6 +14,9 @@ app.use(express.json({ extended: false }));
 
 // CORS
 app.use(cors());
+
+// CRON JOBS
+goalSchedule();
 
 // ROUTES
 app.use("/api/users", require("./routes/user.route"));

@@ -4,7 +4,7 @@ const { saveAndCreateNewGoal } = require("../controllers/goal.controller");
 const Goal = require("../models/Goal.model");
 const User = require("../models/User.model");
 
-export const goalSchedule = () => {
+exports.goalSchedule = () => {
   // Check if it's the end of the week for a given date
   const isEndOfWeek = (date) => date.getDay() === 0; // Assuming Sunday is considered the end of the week
 

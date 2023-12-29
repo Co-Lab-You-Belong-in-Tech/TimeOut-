@@ -1,5 +1,6 @@
 const { updateGoalProgress } = require('../helpers/goal.helper');
-const TimeLog = require('../models/timeLog');
+const TimeLog = require('../models/TimeLog.model');
+
 
 // Create a timelog
 const createTimeLog = async (req, res) => {

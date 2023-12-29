@@ -1,5 +1,5 @@
-const TimeLog = require('../models/TimeLog');
-const Statistics = require('../models/Statistics');
+const TimeLog = require('../models/TimeLog.model');
+// const Statistics = require('../models/Statistics');
 
 // Get weekly stats
 const getWeeklyStats = async (req, res) => {

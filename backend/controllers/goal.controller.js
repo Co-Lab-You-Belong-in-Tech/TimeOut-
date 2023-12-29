@@ -1,5 +1,5 @@
-const Goal = require('../models/Goal');
-const User = require('../models/User');
+const Goal = require('../models/Goal.model');
+const User = require('../models/User.model');
 const { calculateStartDate } = require('../helpers/goal.helper');
 
 // Create a user's goal for the first time only 

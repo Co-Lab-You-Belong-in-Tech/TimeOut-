@@ -1,4 +1,4 @@
-const User = require('../models/user');
+const User = require('../models/User.model');
 
 // Create a new user or retrieve existing user
 const createUser = async (req, res) => {

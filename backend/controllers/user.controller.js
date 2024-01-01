@@ -1,19 +1,26 @@
+const { validationResult } = require('express-validator');
 const User = require('../models/User.model');
 
 // Create a new user or retrieve existing user
 const createUser = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
   try {
-    const { deviceId } = req.body;
+    const { deviceId, timezone } = req.body;
 
     // Check if a user with the provided deviceId already exists
     let user = await User.findOne({ deviceId });
 
-    if (!user) {
-      // If the user doesn't exist, create a new user
-      user = new User({ deviceId });
-      await user.save();
+    if (user) {
+      return res.status(400).json({error: "You already have a user with this deviceID"})
     }
 
+    // If the user doesn't exist, create a new user
+    user = new User({ deviceId, timezone });
+    await user.save();
     res.status(200).json({ user });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -23,8 +30,7 @@ const createUser = async (req, res) => {
 // Get user details
 const getUserDetails = async (req, res) => {
   try {
-    const { userId } = req.params;
-    const user = await User.findById(userId);
+    const user = await User.findById(req.params.id);
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }

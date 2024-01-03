@@ -21,6 +21,11 @@ exports.updateGoalProgress = async (userId, date) => {
     const currentGoal = await Goal.findOne({ userId, startDate: { $lte: new Date(date) } })
       .sort({ createdAt: -1 });
 
+
+    if(!currentGoal){
+      console.log("No goal exist yet")
+    }
+
     if (currentGoal) {
       // Get all timelogs for the user from the start of the week or month up to the specified date
       const timelogs = await TimeLog.find({

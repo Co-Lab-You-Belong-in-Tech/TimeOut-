@@ -3,47 +3,35 @@ const { updateGoalProgress } = require("../helpers/goal.helper");
 const TimeLog = require("../models/TimeLog.model");
 
 // Create a timelog
-const createTimeLog = async (req, res) => {
+const createTimeLog = async (req, res) => {  
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
 
   try {
-    const { userId, date, timeSpent } = req.body;
+    const { userId, date, startTime, timeSpent } = req.body;
 
     // Check if the date is in the future
     const currentDate = new Date();
-    if (date > currentDate) {
-      return res
-        .status(400)
-        .json({ message: "Cannot create timelog for future dates" });
+    if (new Date(date) > currentDate) {
+      return res.status(400).json({ message: 'Cannot create timelog for future dates' });
     }
 
-    // Check if a timelog already exists for the given date
-    const existingTimelog = await TimeLog.findOne({ userId, date });
-    if (existingTimelog) {
-      const formattedDate = existingTimelog.date.toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      });
-
-      return res
-        .status(400)
-        .json({
-          message: `Timelog already exists for ${formattedDate}. Update your timelog if needed.`,
-        });
-    }
-
-    // Create a new timelog for either the current date or past date
-    const timelog = new TimeLog({ userId, date, timeSpent });
+    // Create a new timelog for the current date or past date
+    const timelog = new TimeLog({ userId, date, startTime, timeSpent });
     await timelog.save();
 
     // Update the user's goal progress
-    await updateGoalProgress(userId, timeSpent);
+    await updateGoalProgress(userId, date, timeSpent);
 
-    res.status(201).json({ timelog });
+    const formattedDate = existingTimelog.date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+
+    res.status(201).json({ date: formattedDate, timelog });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -52,24 +40,46 @@ const createTimeLog = async (req, res) => {
 // Update a timelog
 const updateTimeLog = async (req, res) => {
   try {
-    const { userId } = req.params;
-    const { timeSpent } = req.body;
+    const { timelogId } = req.params;
+    const { timeSpent, startTime } = req.body;
 
     // Find the timelog to update
-    const timelog = await TimeLog.findOne({ userId });
+    const timelog = await TimeLog.findById(timelogId);
 
     if (!timelog) {
-      return res.status(404).json({ message: "Timelog not found" });
+      return res.status(404).json({ message: 'Timelog not found' });
     }
 
-    // Update the timelog (timeSpent only)
+    // Update the timelog
     timelog.timeSpent = timeSpent;
+    timelog.startTime = startTime;
     await timelog.save();
 
     // Update the user's goal progress
-    await updateGoalProgress(timelog.userId, timeSpent);
+    await updateGoalProgress(timelog.userId, timelog.date, timeSpent);
 
-    res.status(200).json({ message: "Time spent updated", timelog });
+    res.status(200).json({ timelog });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// Delete a timelog
+const deleteTimeLog = async (req, res) => {
+  try {
+    const { timelogId } = req.params;
+
+    // Find and delete the timelog
+    const timelog = await TimeLog.findByIdAndDelete(timelogId);
+
+    if (!timelog) {
+      return res.status(404).json({ message: 'Timelog not found' });
+    }
+
+    // Update the user's goal progress after deletion
+    await updateGoalProgress(timelog.userId, timelog.date, -timelog.timeSpent); // Subtract the deleted time
+
+    res.status(200).json({ message: 'Timelog deleted successfully' });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -130,6 +140,7 @@ const getUserTimeLogsByDate = async (req, res) => {
 module.exports = {
   createTimeLog,
   updateTimeLog,
+  deleteTimeLog,
   getUserTimeLogs,
   getUserTimeLogsByDate,
 };

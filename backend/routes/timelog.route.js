@@ -7,6 +7,7 @@ const {
   getUserTimeLogs,
   getUserTimeLogsByDate,
   deleteTimeLog,
+  getUserDailyAverage,
 } = require('../controllers/timelog.controller');
 
 // Create a timelog
@@ -28,6 +29,10 @@ router.get('/:userId/:date', getUserTimeLogsByDate);
 
 // Get time logs for a user
 router.get('/:userId', getUserTimeLogs);
+
+
+// Get time logs for a user
+router.get('/daily-average/:userId', getUserDailyAverage);
 
 
 module.exports = router;

@@ -55,6 +55,7 @@ const updateTimeLog = async (req, res) => {
     timelog.startTime = startTime;
     await timelog.save();
 
+    // Check if the timelog is for a current date not a previous date before updating goal progress
     // Update the user's goal progress
     await updateGoalProgress(timelog.userId, timelog.date, timeSpent);
 
@@ -137,10 +138,33 @@ const getUserTimeLogsByDate = async (req, res) => {
   }
 };
 
+// get overall user's daily average
+const getUserDailyAverage = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    
+    // Fetch all time logs for the user
+    const timeLogs = await TimeLog.find({ userId });
+
+    // Calculate the sum of time spent
+    const timeLogSum = timeLogs.reduce((total, log) => total + log.timeSpent, 0);
+
+    // Calculate the overall daily average
+    const numberOfTimeLogs = timeLogs.length;
+    const dailyAverage = numberOfTimeLogs > 0 ? timeLogSum / numberOfTimeLogs : 0;
+
+    res.status(200).json({ dailyAverage });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+
 module.exports = {
   createTimeLog,
   updateTimeLog,
   deleteTimeLog,
   getUserTimeLogs,
   getUserTimeLogsByDate,
+  getUserDailyAverage
 };

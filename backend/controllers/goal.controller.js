@@ -34,42 +34,7 @@ const createGoal = async (req, res) => {
   }
 };
 
-// // Create or update a user's goal
-// const createOrUpdateGoal = async (req, res) => {
-//   try {
-//     const { userId, type, target } = req.body;
-
-//     // Find the user to check if they already have a goal
-//     let user = await User.findById(userId);
-
-//     if (!user) {
-//       return res.status(404).json({ message: 'User not found' });
-//     }
-
-//     // Check if the user already has a goal
-//     let goal = await Goal.findOne({ userId });
-
-//     if (!goal) {
-//       // If no goal exists, create a new one
-//       goal = new Goal({ userId, type, target });
-//       // Set the start date based on the type (weekly or monthly)
-//       goal.startDate = calculateStartDate(type);
-//       await goal.save();
-//     } else {
-//       // If a goal exists, update it with the new details
-//       goal.type = type;
-//       goal.target = target;
-//       goal.startDate = calculateStartDate(type);
-//       await goal.save();
-//     }
-
-//     res.status(200).json({ goal });
-//   } catch (error) {
-//     res.status(500).json({ error: error.message });
-//   }
-// };
-
-// Controller to update a user's goal
+// Update a user's current goal
 const updateGoal = async (req, res) => {
   try {
     const { userId, type, target } = req.body;
@@ -82,23 +47,31 @@ const updateGoal = async (req, res) => {
     }
 
     // Check if the user already has a goal
-    let goal = await Goal.findOne({ userId }).sort({ createdAt: -1 });
+    let currentGoal = await Goal.findOne({ userId }).sort({ createdAt: -1 });
 
-    if (!goal) {
+    if (!currentGoal) {
       return res.status(404).json({ message: 'User does not have a goal. Use createGoal to create one.' });
     }
 
-    // If a goal exists, update it with the new details
-    goal.type = type;
-    goal.target = target;
-    goal.startDate = calculateStartDate(type);
-    await goal.save();
+    // Check if the goal type is changing
+    if (currentGoal.type !== type) {
+      // Update the goal based on the type change
+      let progress = await handleGoalTypeChange(currentGoal, userId, type, target);
+      currentGoal.progress = progress;
+    }
 
-    res.status(200).json({ goal });
+    // Update the goal details
+    currentGoal.type = type;
+    currentGoal.target = target;
+
+    await currentGoal.save();
+
+    res.status(200).json({ currentGoal });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
+
 
 // Get the user's current goal
 const getUserCurrentGoal = async (req, res) => {
@@ -123,14 +96,14 @@ const saveAndCreateNewGoal = async (req, res) => {
   try {
     const { userId, progress } = req.body;
 
-    // Find the user's current goal
+    // Find the user's current goal in the database
     let currentGoal = await Goal.findOne({ userId }).sort({ createdAt: -1 });
 
     if (!currentGoal) {
       return res.status(404).json({ message: 'Goal not found for the user' });
     }
 
-    // Save the current week's or month's progress
+    // Save the current week's or month's progress as previous goal
     const previousGoal = new Goal({
       userId: currentGoal.userId,
       type: currentGoal.type,

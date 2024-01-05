@@ -50,3 +50,66 @@ exports.updateGoalProgress = async (userId, date) => {
     console.error('Error updating goal progress:', error);
   }
 };
+
+// Helper function to calculate progress for weekly goal type
+exports.calculateWeeklyProgress = async (userId, startDate, endDate) => {
+  try {
+    // Get all time logs for the specified date range
+    const timelogs = await TimeLog.find({
+      userId,
+      date: { $gte: startDate, $lte: endDate },
+    });
+
+    // Calculate the total time spent in minutes
+    const totalTimeSpent = timelogs.reduce((total, timelog) => total + timelog.timeSpent, 0);
+
+    return totalTimeSpent;
+  } catch (error) {
+    throw error;
+  }
+};
+
+// Helper function to calculate progress for monthly goal type
+exports.calculateMonthlyProgress = async (userId, startDate, endDate) => {
+  try {
+    // Get all time logs for the specified date range
+    const timelogs = await TimeLog.find({
+      userId,
+      date: { $gte: startDate, $lt: endDate },
+    });
+
+    // Calculate the total time spent in minutes
+    const totalTimeSpent = timelogs.reduce((total, timelog) => total + timelog.timeSpent, 0);
+
+    return totalTimeSpent;
+  } catch (error) {
+    throw error;
+  }
+};
+
+// Helper function to handle goal type change without losing data
+exports.handleGoalTypeChange = async (currentGoal, userId, newType, target) => {
+  try {
+    // Calculate progress based on the new goal type
+    let progress = 0;
+
+    if (newType === 'weekly') {
+      // Calculate progress for weekly goal type
+      const startDate = calculateStartDate(newType);
+      const endDate = new Date();  // Current date
+      progress = await calculateWeeklyProgress(userId, startDate, endDate);
+    } else if (newType === 'monthly') {
+      // Calculate progress for monthly goal type
+      const startDate = calculateStartDate(newType);
+      const endDate = new Date();  // Current date
+      progress = await calculateMonthlyProgress(userId, startDate, endDate);
+    }
+
+    return progress;
+  } catch (error) {
+    console.log(error)
+    throw error;
+  }
+};
+
+

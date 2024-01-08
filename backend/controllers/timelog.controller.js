@@ -25,7 +25,7 @@ const createTimeLog = async (req, res) => {
     // Update the user's goal progress
     await updateGoalProgress(userId, date, timeSpent);
 
-    const formattedDate = existingTimelog.date.toLocaleDateString("en-US", {
+    const formattedDate = timelog.date.toLocaleDateString("en-US", {
       year: "numeric",
       month: "long",
       day: "numeric",

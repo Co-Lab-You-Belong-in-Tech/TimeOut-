@@ -31,7 +31,7 @@ router.get('/:userId/:date', getUserTimeLogsByDate);
 router.get('/:userId', getUserTimeLogs);
 
 
-// Get time logs for a user
+//Get overall user's daily average
 router.get('/daily-average/:userId', getUserDailyAverage);
 
 

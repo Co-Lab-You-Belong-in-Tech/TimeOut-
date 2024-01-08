@@ -1,10 +1,16 @@
 const Goal = require('../models/Goal.model');
 const User = require('../models/User.model');
 const { calculateStartDate } = require('../helpers/goal.helper');
+const { validationResult } = require('express-validator');
 
 // Create a user's goal for the first time only 
 // (After this, each week or month, the saveAndCreateNewGoal controller will create a new goal based on the details of the previous one)
 const createGoal = async (req, res) => {
+    const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+  
   try {
     const { userId, type, target } = req.body;
 

@@ -18,8 +18,7 @@ exports.calculateStartDate = (type, date) => {
 exports.updateGoalProgress = async (userId, date) => {
   try {
     // Find the user's current goal that has a start date lte to the given date
-    const currentGoal = await Goal.findOne({ userId, startDate: { $lte: new Date(date) } })
-      .sort({ createdAt: -1 });
+    const currentGoal = await Goal.findOne({ userId }).sort({ createdAt: -1 });
 
 
     if(!currentGoal){
@@ -32,7 +31,7 @@ exports.updateGoalProgress = async (userId, date) => {
         userId,
         // Filter timelogs based on the goal type and date range
         date: {
-          $gte: calculateStartDate(currentGoal.type, date), // Start of the week or month
+          $gte: exports.calculateStartDate(currentGoal.type, date), // Start of the week or month
           $lte: new Date(date), // Specified date
         },
       });
@@ -95,12 +94,12 @@ exports.handleGoalTypeChange = async (currentGoal, userId, newType, target) => {
 
     if (newType === 'weekly') {
       // Calculate progress for weekly goal type
-      const startDate = calculateStartDate(newType);
+      const startDate = exports.calculateStartDate(newType);
       const endDate = new Date();  // Current date
       progress = await calculateWeeklyProgress(userId, startDate, endDate);
     } else if (newType === 'monthly') {
       // Calculate progress for monthly goal type
-      const startDate = calculateStartDate(newType);
+      const startDate = exports.calculateStartDate(newType);
       const endDate = new Date();  // Current date
       progress = await calculateMonthlyProgress(userId, startDate, endDate);
     }

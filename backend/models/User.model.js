@@ -6,6 +6,7 @@ const userSchema = new mongoose.Schema({
   // goals: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Goal' }],
   timeAverage: { type: Number, default: 0 },
   timezone: { type: String, required: true },
+  playerId: {type: String, default: ""} // For onesignal notification
 }, { timestamps: true });
 
 const User = mongoose.model('User', userSchema);

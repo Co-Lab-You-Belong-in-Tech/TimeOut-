@@ -117,7 +117,7 @@ const getUserTimeLogsByDate = async (req, res) => {
     }
 
     // Find the time log using the original date format in the database
-    const timeLog = await TimeLog.findOne({
+    const timeLog = await TimeLog.find({
       userId,
       date: { $gte: new Date(date), $lt: new Date(date).setDate(new Date(date).getDate() + 1) }
     });

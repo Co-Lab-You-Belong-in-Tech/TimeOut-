@@ -6,6 +6,8 @@ import Result from "./Result";
 import Control from "./Control";
 import { displayTime } from "./Util";
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 
 export default function StopWatch() {
@@ -86,6 +88,7 @@ const styles = StyleSheet.create({
     flex: 3 / 5,
     justifyContent: "center",
     alignItems: "center",
+    top:60
   },
   displayText: {
     color: "#364329",
@@ -94,10 +97,14 @@ const styles = StyleSheet.create({
     fontFamily: Platform.OS === "ios" ? "Helvetica Neue" : null,
   },
   control: {
-    height: 0,
+    
     flexDirection: "row",
-    justifyContent: "space-around",
-    bottom:0
+    justifyContent: "center",
+    alignContent: "center",
+    alignItems:'center',
+    top:130
+    
+    
   },
   result: { flex: 2 / 5 },
   label:{

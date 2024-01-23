@@ -5,11 +5,14 @@ import { NavigationContainer } from '@react-navigation/native';
 import Manual from './Manual';
 import Stopwatch from './Stopwatch';
 
+
 const Tabs = createMaterialTopTabNavigator();
 
 const Home = () => {
   return (
+    
     <SafeAreaView style={styles.background}>
+      
     <Tabs.Navigator screenOptions={{
       tabBarActiveTintColor: '#4C5F3A',
       tabBarInactiveTintColor: '#192111',

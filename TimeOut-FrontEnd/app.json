@@ -3,7 +3,7 @@
     "name": "TimeOut-",
     "slug": "TimeOut-",
     "privacy": "unlisted",
-    "version": "1.0.0",
+    "version": "1.0.6",
     "orientation": "portrait",
     "icon": "./assets/TimeOutLogo.png",
     "userInterfaceStyle": "light",
@@ -15,9 +15,18 @@
     "assetBundlePatterns": [
       "**/*"
     ],
+    "plugins": [
+      [
+        "onesignal-expo-plugin",
+        {
+          "mode": "development"
+        }
+      ]
+    ],
     "ios": {
       "bundleIdentifier": "com.Time.Out",
-      "buildNumber": "1.0.0"
+      "buildNumber": "1.0.6",
+      "icon": "./assets/TimeOutLogo.png"
     },
     "android": {
       "adaptiveIcon": {
@@ -27,6 +36,11 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "4d6ef6d2-9553-4d84-9a34-1403a68b5098"
+      }
     }
   }
 }

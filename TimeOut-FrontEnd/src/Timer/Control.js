@@ -1,47 +1,76 @@
 import React from "react";
-import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import { StyleSheet, Text, View, TouchableOpacity, Image } from "react-native";
+
 // we will deal with buttons here
 function Control({ isRunning, handleLeftButtonPress, handleMiddleButtonPress, handleRightButtonPress }) {
   return (
     <>
+    
       <TouchableOpacity
-        style={[
-          styles.controlButtonBorder,
-          { backgroundColor: "white" },
-        ]}
+        
         onPress={handleLeftButtonPress}
       >
-        <View style={styles.controlButton}>
-          <Text style={{ color: "#87947B"}}>
-            {isRunning ? "Stop" : "Stop"}
-          </Text>
+        {isRunning ?
+        <View>
+          <Image source={require('../../assets/Stop.png')}
+          style={{
+            width:45,
+            height: 45
+            
+          }}/>
         </View>
+        :
+        <View>
+          
+        </View>}
+
       </TouchableOpacity>
+
+      
       <TouchableOpacity
-        style={[
-          styles.controlButtonBorder,
-          { backgroundColor: "#87947B" },
-        ]}
+        
         onPress={handleMiddleButtonPress}
       >
-        <View style={styles.controlButton}>
-          <Text style={{ color: 'white' }}>
-            {isRunning ? "Pause" : "Start"}
-          </Text>
+        {isRunning ?
+        <View >
+      
+          <Image source={require('../../assets/Pause-Button.png')}
+          style={{
+            width:105,
+            height: 105
+            
+          }}/>
         </View>
+        :
+        <View>
+          <Image source={require('../../assets/Play-Button.png')}
+            style={{
+              width:105,
+              height: 105
+              
+            }}
+            />
+        </View>}
       </TouchableOpacity>
+      
+
+
 <TouchableOpacity
-        style={[
-          styles.controlButtonBorder,
-          { backgroundColor: "white" },
-        ]}
         onPress={handleRightButtonPress}
       >
-        <View style={styles.controlButton}>
-          <Text style={{ color: "#4C5F3A" }}>
-            {isRunning ? "Reset" : "Reset"}
-          </Text>
+        {isRunning ?
+        <View>
+          <Image source={require('../../assets/Reset.png')}
+          style={{
+            width:45,
+            height: 45
+            
+          }}/>
         </View>
+        :
+        <View>
+          
+        </View>}
       </TouchableOpacity>
     </>
   );

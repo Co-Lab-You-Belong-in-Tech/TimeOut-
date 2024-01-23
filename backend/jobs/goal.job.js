@@ -1,4 +1,3 @@
-// Inside your goal.job.js file
 const cron = require("node-cron");
 const { saveAndCreateNewGoal } = require("../controllers/goal.controller");
 const Goal = require("../models/Goal.model");

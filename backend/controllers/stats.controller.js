@@ -16,30 +16,41 @@ const getWeeklyStats = async (req, res) => {
     const currentWeekTimeLogs = await TimeLog.find({
       userId,
       date: { $gte: startOfCurrentWeek, $lte: currentDate },
-    });
+    }).sort("date");
 
     // Get time logs for the previous week
     const previousWeekTimeLogs = await TimeLog.find({
       userId,
       date: { $gte: startOfPreviousWeek, $lt: startOfCurrentWeek },
-    });
+    }).sort("date");
+
+    // Sum up time durations for the same day
+    const sumTimeDurations = (timeLogs) => {
+      const summedStats = {};
+      timeLogs.forEach((timelog) => {
+        const day = timelog.date.toLocaleDateString('en-US', { weekday: 'long' });
+        if (!summedStats[day]) {
+          summedStats[day] = 0;
+        }
+        summedStats[day] += timelog.timeSpent;
+      });
+      return Object.entries(summedStats).map(([day, timeDuration]) => ({
+        day,
+        timeDuration,
+      }));
+    };
 
     // Format the data for the response
-    const currentWeekStats = currentWeekTimeLogs.map(timelog => ({
-      day: timelog.date.toLocaleDateString('en-US', { weekday: 'long' }),
-      timeDuration: timelog.timeSpent,
-    }));
-
-    const previousWeekStats = previousWeekTimeLogs.map(timelog => ({
-      day: timelog.date.toLocaleDateString('en-US', { weekday: 'long' }),
-      timeDuration: timelog.timeSpent,
-    }));
+    const currentWeekStats = sumTimeDurations(currentWeekTimeLogs);
+    const previousWeekStats = sumTimeDurations(previousWeekTimeLogs);
 
     res.status(200).json({ currentWeekStats, previousWeekStats });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
+
+
 
 // Get monthly stats
 const getMonthlyStats = async (req, res) => {

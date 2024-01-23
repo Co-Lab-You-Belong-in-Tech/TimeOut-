@@ -1,5 +1,5 @@
 # **TimeOut! Backend API Documentation**
-
+ 
 Welcome to the backend documentation for TimeOut! This API serves as the backend for managing user time logs, goals, and statistics.
 
 ## **API Endpoints**
@@ -355,7 +355,7 @@ Welcome to the backend documentation for TimeOut! This API serves as the backend
     {
       "currentWeekStats": [
         {
-          "day": "string",
+          "day(eg Sunday)": "string",
           "timeDuration": "number"
         }
       ],

@@ -9,17 +9,18 @@ const createUser = async (req, res) => {
   }
 
   try {
-    const { deviceId, timezone } = req.body;
+    const { deviceId, timezone, playerId } = req.body;
 
     // Check if a user with the provided deviceId already exists
     let user = await User.findOne({ deviceId });
 
+    // If the user already exists, return the existing user
     if (user) {
-      return res.status(400).json({error: "You already have a user with this deviceID"})
+      return res.status(200).json({ user });
     }
 
     // If the user doesn't exist, create a new user
-    user = new User({ deviceId, timezone });
+    user = new User({ deviceId, timezone, playerId });
     await user.save();
     res.status(200).json({ user });
   } catch (error) {

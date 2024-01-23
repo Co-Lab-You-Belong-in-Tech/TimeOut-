@@ -24,15 +24,14 @@ router.put('/:timelogId', updateTimeLog);
 // Delete a timelog
 router.delete('/:timelogId', deleteTimeLog);
 
+// Get daily average timeSpent of a user
+router.get('/daily-average/:userId', getUserDailyAverage);
+
 // Get time logs for a specific date
 router.get('/:userId/:date', getUserTimeLogsByDate);
 
 // Get time logs for a user
 router.get('/:userId', getUserTimeLogs);
-
-
-// Get time logs for a user
-router.get('/daily-average/:userId', getUserDailyAverage);
 
 
 module.exports = router;

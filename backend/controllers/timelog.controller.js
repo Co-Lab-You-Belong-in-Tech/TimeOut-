@@ -97,7 +97,7 @@ const deleteTimeLog = async (req, res) => {
 const getUserTimeLogs = async (req, res) => {
   try {
     const { userId } = req.params;
-    const timeLogs = await TimeLog.find({ userId });
+    const timeLogs = await TimeLog.find({ userId }).sort("date");
 
     res.status(200).json({ timeLogs });
   } catch (error) {
@@ -166,6 +166,37 @@ const getUserDailyAverage = async (req, res) => {
   }
 };
 
+// Get the time log streak
+const getTimeLogStreak = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    // Fetch all time logs for the user
+    const timeLogs = await TimeLog.find({ userId }).sort({ date: 'asc' });
+
+    // Calculate the streak based on the current date
+    const currentDate = new Date();
+    let streak = 0;
+
+    // Loop through the timeLogs to calculate the streak
+    for (let i = timeLogs.length - 1; i >= 0; i--) {
+      const timeLogDate = timeLogs[i].date;
+      const timeLogDayDifference = Math.floor((currentDate - timeLogDate) / (1000 * 60 * 60 * 24));
+
+      if (timeLogDayDifference === streak) {
+        streak++;
+      } else {
+        // Break the loop if the streak is broken
+        break; 
+      }
+    }
+
+    res.status(200).json({ streak });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 
 module.exports = {
   createTimeLog,
@@ -173,5 +204,6 @@ module.exports = {
   deleteTimeLog,
   getUserTimeLogs,
   getUserTimeLogsByDate,
-  getUserDailyAverage
+  getUserDailyAverage,
+  getTimeLogStreak,
 };

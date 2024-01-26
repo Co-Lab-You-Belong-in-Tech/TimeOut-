@@ -25,15 +25,25 @@ const getWeeklyStats = async (req, res) => {
     }).sort("date");
 
     // Sum up time durations for the same day
+    const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+    // current day of the week
+    const curDayOfWeek = new Date().toLocaleDateString('en-US', { weekday: 'long' });
+
+    // Index of the current day of the week
+    const dayOfWeekIndex = daysOfWeek.indexOf(curDayOfWeek);
+
     const sumTimeDurations = (timeLogs) => {
-      const summedStats = {};
+
+      // The stats of each day is currently set to  0
+      const summedStats = Object.fromEntries(daysOfWeek.map(day => [day, 0]));
+
+      // Loop through the time logs and sum up the time durations of each day
       timeLogs.forEach((timelog) => {
         const day = timelog.date.toLocaleDateString('en-US', { weekday: 'long' });
-        if (!summedStats[day]) {
-          summedStats[day] = 0;
-        }
         summedStats[day] += timelog.timeSpent;
       });
+
       return Object.entries(summedStats).map(([day, timeDuration]) => ({
         day,
         timeDuration,
@@ -41,7 +51,7 @@ const getWeeklyStats = async (req, res) => {
     };
 
     // Format the data for the response
-    const currentWeekStats = sumTimeDurations(currentWeekTimeLogs);
+    const currentWeekStats = sumTimeDurations(currentWeekTimeLogs).slice(0, dayOfWeekIndex + 1);
     const previousWeekStats = sumTimeDurations(previousWeekTimeLogs);
 
     res.status(200).json({ currentWeekStats, previousWeekStats });

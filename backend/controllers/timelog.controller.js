@@ -1,6 +1,7 @@
 const { validationResult } = require("express-validator");
 const { updateGoalProgress } = require("../helpers/goal.helper");
 const TimeLog = require("../models/TimeLog.model");
+const dayjs = require('dayjs');
 
 // Create a timelog
 const createTimeLog = async (req, res) => {  
@@ -175,19 +176,19 @@ const getTimeLogStreak = async (req, res) => {
     const timeLogs = await TimeLog.find({ userId }).sort({ date: 'asc' });
 
     // Calculate the streak based on the current date
-    const currentDate = new Date();
+    const currentDate = dayjs();
     let streak = 0;
 
     // Loop through the timeLogs to calculate the streak
     for (let i = timeLogs.length - 1; i >= 0; i--) {
-      const timeLogDate = timeLogs[i].date;
-      const timeLogDayDifference = Math.floor((currentDate - timeLogDate) / (1000 * 60 * 60 * 24));
+      const timeLogDate = dayjs(timeLogs[i].date);
+      const timeLogDayDifference = currentDate.diff(timeLogDate, 'day');
 
       if (timeLogDayDifference === streak) {
         streak++;
       } else {
         // Break the loop if the streak is broken
-        break; 
+        break;
       }
     }
 

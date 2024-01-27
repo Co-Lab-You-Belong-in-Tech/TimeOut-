@@ -1,29 +1,89 @@
 import React, {useState} from 'react';
-import { View, Text, SafeAreaView, StyleSheet, TouchableOpacity, Modal, Button } from 'react-native';
+import { View, Text, SafeAreaView, StyleSheet, TouchableOpacity, Modal, Button, TextInput } from 'react-native';
 
 
 const Goals = () => {
   const [selectedRadio, setSelectedRadio] = useState(null);
   const [openTimeDuration, setOpenTimeDuration] = useState(false)
+  const [selectedDuration, setSelectedDuration] = useState("")
+
 
   const handleOnPressDuration = () => {
     setOpenTimeDuration(!openTimeDuration)
   }
 
   const TimeDurationModal = ({ isVisible, closeModal }) => {
+    const [hour, setHour] = useState('');
+    const [minute, setMinute] = useState('');
+    const [period, setPeriod] = useState('AM');
+
+    const handleConfirm = () => {
+      // Perform any validation or additional logic here
+      // For example, check if a valid time is selected
+      if (hour !== '' && minute !== '') {
+        // Handle the selected time
+        const selectedDurationStr = `${hour}:${minute}`;
+        setSelectedDuration(selectedDurationStr); //
+        console.log(`Selected Time: ${hour}:${minute}`);
+      } else if(hour == "" && minute !== ''){
+        const selectedDurationStr = `00:${minute}`;
+        setSelectedDuration(selectedDurationStr); //
+        
+      }
+      closeModal();
+    };
     return (
-      <Modal animationType="slide" transparent={true} visible={isVisible}>
+      <Modal animationType="slide" transparent={true} visible={isVisible} >
         {/* Modal Content for TimePicker */}
         {/* Add your second modal content here */}
-        <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-            <Text>TimePicker Modal Content</Text>
-            <Button title="Close TimePicker Modal" onPress={closeModal} />
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.headerText}>Enter Duration</Text>
+            <View style={styles.timeContainer}>
+              <View style={styles.inputContainer}>
+                <TextInput
+                  style={styles.input}
+                  placeholder="HH"
+                  keyboardType="numeric"
+                  maxLength={2}
+                  value={hour}
+                  onChangeText={text => setHour(text)}
+                />
+                <Text style={styles.label}>Hours</Text>
+              </View>
+              <Text style={styles.colon}>:</Text>
+              <View style={styles.inputContainer}>
+                <TextInput
+                  style={styles.input}
+                  placeholder="MM"
+                  keyboardType="numeric"
+                  maxLength={2}
+                  value={minute}
+                  onChangeText={text => setMinute(text)}
+                />
+                <Text style={styles.label}>Minutes</Text>
+              </View>
+              
+            </View>
+            
+            <View style={{ flexDirection: 'row', justifyContent: 'flex-end', marginBottom: 20 }}>
+            <TouchableOpacity style={styles.confirmButton} onPress={closeModal} >
+              <Text style={styles.confirmButtonText}>Cancel</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.confirmButton]}
+              onPress={handleConfirm}
+            >
+              <Text style={styles.confirmButtonText}>OK</Text>
+            </TouchableOpacity>
+            
+            </View>
           </View>
         </View>
       </Modal>
     );
   };
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={{ padding: 20 }}>
@@ -60,7 +120,7 @@ const Goals = () => {
 
                 onPress={handleOnPressDuration}
               >
-                <Text style={{ fontSize: 20 }}>{<Text style={{ color: 'grey' }}>HH:MM</Text>}</Text>
+                <Text style={{ fontSize: 20 }}>{selectedDuration || <Text style={{ color: 'grey' }}>HH:MM</Text>}</Text>
 
               </TouchableOpacity>
 
@@ -157,6 +217,75 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10,
+    width: '80%',
+    alignItems: 'center',
+  },
+  headerText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 20,
+  },
+  timeContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  input: {
+    width: 100,
+    height: 50,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 10,
+    textAlign: 'center',
+    marginRight: 10,
+    
+  },
+  colon: {
+    fontSize: 50,
+    marginRight: 10,
+    marginBottom:20
+  },
+  periodContainer: {
+    
+  },
+  periodButton: {
+    padding: 10,
+    borderRadius: 5,
+    marginRight: 10,
+    backgroundColor: '#3498db',
+  },
+  selectedPeriodButton: {
+    backgroundColor: '#2980b9',
+  },
+  periodText: {
+    color: 'white',
+    fontSize: 16,
+  },
+  confirmButton: {
+    
+    
+    
+    
+    opacity: 1,
+  },
+  confirmButtonText: {
+    color: '#4C5F3A',
+    fontSize: 18,
+  },
+  disabledButton: {
+    backgroundColor: '#ccc', // Change the color for the disabled state
+    opacity: 0.5, // Reduce the opacity to indicate that the button is disabled
   },
 })
 

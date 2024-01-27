@@ -3,7 +3,7 @@
     "name": "TimeOut-",
     "slug": "TimeOut-",
     "privacy": "unlisted",
-    "version": "1.0.6",
+    "version": "1.0.7",
     "orientation": "portrait",
     "icon": "./assets/TimeOutLogo.png",
     "userInterfaceStyle": "light",
@@ -25,7 +25,7 @@
     ],
     "ios": {
       "bundleIdentifier": "com.Time.Out",
-      "buildNumber": "1.0.6",
+      "buildNumber": "1.0.7",
       "icon": "./assets/TimeOutLogo.png"
     },
     "android": {

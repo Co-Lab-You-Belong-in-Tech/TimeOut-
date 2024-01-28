@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import { View, Text, SafeAreaView, StyleSheet, TouchableOpacity, Modal, Button, TextInput } from 'react-native';
 
 
@@ -25,10 +25,10 @@ const Goals = () => {
         const selectedDurationStr = `${hour}:${minute}`;
         setSelectedDuration(selectedDurationStr); //
         console.log(`Selected Time: ${hour}:${minute}`);
-      } else if(hour == "" && minute !== ''){
+      } else if (hour == "" && minute !== '') {
         const selectedDurationStr = `00:${minute}`;
         setSelectedDuration(selectedDurationStr); //
-        
+
       }
       closeModal();
     };
@@ -63,20 +63,20 @@ const Goals = () => {
                 />
                 <Text style={styles.label}>Minutes</Text>
               </View>
-              
+
             </View>
-            
+
             <View style={{ flexDirection: 'row', justifyContent: 'flex-end', marginBottom: 20 }}>
-            <TouchableOpacity style={styles.confirmButton} onPress={closeModal} >
-              <Text style={styles.confirmButtonText}>Cancel</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.confirmButton]}
-              onPress={handleConfirm}
-            >
-              <Text style={styles.confirmButtonText}>OK</Text>
-            </TouchableOpacity>
-            
+              <TouchableOpacity style={styles.confirmButton} onPress={closeModal} >
+                <Text style={styles.confirmButtonText}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.confirmButton]}
+                onPress={handleConfirm}
+              >
+                <Text style={styles.confirmButtonText}>OK</Text>
+              </TouchableOpacity>
+
             </View>
           </View>
         </View>
@@ -85,35 +85,37 @@ const Goals = () => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={{ padding: 20 }}>
-        <Text style={{ fontSize: 34, fontWeight: 300 }}>
-          Set your goal
-        </Text>
-        <Text style={{ fontSize: 17, marginTop: 10 }}>
-          Choose your schedule & track progress
-        </Text>
-        <TouchableOpacity style={styles.weekly} onPress={()=>setSelectedRadio(1)}>
-          <View style={styles.wrapper}>
-            <View style={styles.radio}>
-              {selectedRadio==1? <View style={styles.radioBg}></View>:null}
-            </View>
 
-            <Text style={{fontSize:20}}>Weekly</Text>
-
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.weekly} onPress={()=>setSelectedRadio(2)}>
-          <View style={styles.wrapper}>
-            <View style={styles.radio}>
-            {selectedRadio==2? <View style={styles.radioBg}></View>:null}
+    <SafeAreaView style={{ flex: 1 }}>
+      <View style={{ flex: 1, alignItems: "center" }}>
+        <View style={{ padding: 20, width: "100%"}}>
+          <Text style={{ fontSize: 34, fontWeight: 300 }}>
+            Set your goal
+          </Text>
+          <Text style={{ fontSize: 17, marginTop: 10 }}>
+            Choose your schedule & track progress
+          </Text>
+          <TouchableOpacity style={styles.weekly} onPress={() => setSelectedRadio(1)}>
+            <View style={styles.wrapper}>
+              <View style={styles.radio}>
+                {selectedRadio == 1 ? <View style={styles.radioBg}></View> : null}
               </View>
-            <Text style={{fontSize:20}}>Monthly</Text>
 
-          </View>
-        </TouchableOpacity>
-        
-        <View style={{ width: "100%"}}>
+              <Text style={{ fontSize: 20 }}>Weekly</Text>
+
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.weekly} onPress={() => setSelectedRadio(2)}>
+            <View style={styles.wrapper}>
+              <View style={styles.radio}>
+                {selectedRadio == 2 ? <View style={styles.radioBg}></View> : null}
+              </View>
+              <Text style={{ fontSize: 20 }}>Monthly</Text>
+
+            </View>
+          </TouchableOpacity>
+
+          <View style={{ width: "100%" }}>
             <View style={styles.dateView}>
               <Text style={styles.dateLabels}>Goal</Text>
               <TouchableOpacity
@@ -127,9 +129,20 @@ const Goals = () => {
             </View>
 
 
+
+
           </View>
-          </View>
-          <TimeDurationModal isVisible={openTimeDuration} closeModal={handleOnPressDuration} />
+
+        </View>
+        <View style={styles.submitBtn}>
+          <TouchableOpacity
+            style={styles.submitStyle}
+          >
+            <Text style={{ fontSize: 20, color: "white" }}>Submit</Text>
+          </TouchableOpacity>
+        </View>
+        <TimeDurationModal isVisible={openTimeDuration} closeModal={handleOnPressDuration} />
+      </View>
     </SafeAreaView>
   )
 }
@@ -138,6 +151,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#F6F5F3",
+    alignItems: 'center'
 
   },
   text: {
@@ -156,7 +170,7 @@ const styles = StyleSheet.create({
   wrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    
+
   },
   radioBg: {
     backgroundColor: '#87947B',
@@ -165,26 +179,26 @@ const styles = StyleSheet.create({
     margin: 3,
     borderRadius: 20
   },
-  weekly:{
-    borderColor:'black',
-    borderWidth:1,
-    borderRadius:5,
-    marginTop:20
+  weekly: {
+    borderColor: 'black',
+    borderWidth: 1,
+    borderRadius: 5,
+    marginTop: 20
   },
   dateView: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-   
-    
+
+
     paddingVertical: 5,
-    borderColor:'black',
-    borderWidth:1,
-    borderRadius:5,
-    marginTop:20,
-    padding:10,
-    height:50
-  
+    borderColor: 'black',
+    borderWidth: 1,
+    borderRadius: 5,
+    marginTop: 20,
+    padding: 10,
+    height: 50
+
 
 
 
@@ -194,7 +208,7 @@ const styles = StyleSheet.create({
     marginRight: 8,
     fontSize: 20,
     color: "#111",
-    fontWeight:300
+    fontWeight: 300
   },
   centeredView: {
     flex: 1,
@@ -249,15 +263,15 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     textAlign: 'center',
     marginRight: 10,
-    
+
   },
   colon: {
     fontSize: 50,
     marginRight: 10,
-    marginBottom:20
+    marginBottom: 20
   },
   periodContainer: {
-    
+
   },
   periodButton: {
     padding: 10,
@@ -273,10 +287,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   confirmButton: {
-    
-    
-    
-    
+
+
+
+
     opacity: 1,
   },
   confirmButtonText: {
@@ -286,6 +300,26 @@ const styles = StyleSheet.create({
   disabledButton: {
     backgroundColor: '#ccc', // Change the color for the disabled state
     opacity: 0.5, // Reduce the opacity to indicate that the button is disabled
+  },
+  submitStyle: {
+    backgroundColor: "#4C5F3A",
+    paddingVertical: 22,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 50,
+    paddingVertical: 12,
+    marginVertical: 16,
+    marginBottom: 10,
+    height: 50
+  },
+  submitBtn: {
+    justifyContent: "flex-end",
+    paddingVertical: 12,
+    width: '90%',
+    bottom: 0,
+    marginBottom: 0,
+    flex: 1,
+
   },
 })
 

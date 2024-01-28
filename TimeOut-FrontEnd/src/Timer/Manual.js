@@ -151,6 +151,8 @@ const Manual = () => {
         console.log(`Selected Time: ${hour}:${minute}`);
       } else if (hour == "" && minute !== '') {
         const selectedDurationStr = `00:${minute}`;
+        const selectedDurationStrMin = parseInt(minute);
+        setSelectedTimeDurationData(selectedDurationStrMin)
         setSelectedDuration(selectedDurationStr); //
 
       }

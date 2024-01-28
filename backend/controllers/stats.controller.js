@@ -59,48 +59,97 @@ const getWeeklyStats = async (userId, date) => {
   }
 };
 
+// // Get monthly stats
+// const getMonthlyStats = async (userId, date) => {
+//   try {
+
+//     const currentDate = dayjs(date);
+//     const startOfCurrentMonth = currentDate.startOf("month");
+
+//     // Get time logs for the current month
+//     const currentMonthTimeLogs = await TimeLog.find({
+//       userId,
+//       date: { $gte: startOfCurrentMonth.toDate(), $lte: currentDate.toDate() },
+//     }).sort("date");
+
+//     // Sum up time durations for the same day
+//     const sumTimeDurations = (timeLogs) => {
+//       const summedStats = {};
+
+//       // Loop through the time logs and sum up the time durations of each day
+//       timeLogs.forEach((timelog) => {
+//         const day = dayjs(timelog.date).date();
+
+//         if (!summedStats[day]) {
+//           summedStats[day] = 0;
+//         }
+
+//         summedStats[day] += timelog.timeSpent;
+//       });
+
+//       // Convert the summed stats to the desired response format
+//       return Object.entries(summedStats).map(([day, timeDuration]) => ({
+//         day: parseInt(day),
+//         timeDuration,
+//       }));
+//     };
+
+//     // Format the data for the response
+//     const monthlyStats = sumTimeDurations(currentMonthTimeLogs);
+
+//     return ({ monthlyStats });
+//   } catch (error) {
+//     console.error(error);
+//     throw error;  }
+// };
+
+
+
 // Get monthly stats
-const getMonthlyStats = async (userId, date) => {
+const getMonthlyStats = async (userId, currentDate) => {
   try {
+    const startOfCurrentYear = dayjs(currentDate).startOf('year');
 
-    const currentDate = dayjs(date);
-    const startOfCurrentMonth = currentDate.startOf("month");
-
-    // Get time logs for the current month
-    const currentMonthTimeLogs = await TimeLog.find({
+    // Get time logs for the current year
+    const timeLogsForYear = await TimeLog.find({
       userId,
-      date: { $gte: startOfCurrentMonth.toDate(), $lte: currentDate.toDate() },
-    }).sort("date");
+      date: { $gte: startOfCurrentYear.toDate(), $lte: dayjs(currentDate).toDate() },
+    }).sort('date');
 
-    // Sum up time durations for the same day
-    const sumTimeDurations = (timeLogs) => {
-      const summedStats = {};
+    // Aggregate time durations for each month
+    const monthlyStats = timeLogsForYear.reduce((acc, timelog) => {
+      const month = dayjs(timelog.date).format('MMM');
+      acc[month] = (acc[month] || 0) + timelog.timeSpent;
+      return acc;
+    }, {});
 
-      // Loop through the time logs and sum up the time durations of each day
-      timeLogs.forEach((timelog) => {
-        const day = dayjs(timelog.date).date();
+    // Get all months in the year
+    const allMonthsInYear = Array.from({ length: 12 }, (_, index) =>
+      dayjs().startOf('year').add(index, 'month').format('MMM')
+    );
 
-        if (!summedStats[day]) {
-          summedStats[day] = 0;
-        }
+    // Ensure all months are included with a total time of 0
+    const formattedMonthlyStats = allMonthsInYear.map((month) => ({
+      month,
+      totalTimeLog: monthlyStats[month] || 0,
+    }));
 
-        summedStats[day] += timelog.timeSpent;
-      });
-
-      // Convert the summed stats to the desired response format
-      return Object.entries(summedStats).map(([day, timeDuration]) => ({
-        day: parseInt(day),
-        timeDuration,
-      }));
-    };
+    // Calculate the total time spent in the current month
+    const currentMonthTotal = formattedMonthlyStats.find(
+      (entry) => entry.month === dayjs(currentDate).format('MMM')
+    )?.totalTimeLog || 0;
 
     // Format the data for the response
-    const monthlyStats = sumTimeDurations(currentMonthTimeLogs);
+    const response = {
+      currentMonthTotal,
+      monthlyStats: formattedMonthlyStats,
+    };
 
-    return ({ monthlyStats });
+    return response;
   } catch (error) {
     console.error(error);
-    throw error;  }
+    throw error;
+  }
 };
 
 // Get combined weekly and monthly stats

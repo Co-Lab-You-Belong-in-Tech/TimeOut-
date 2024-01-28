@@ -1,12 +1,10 @@
-const TimeLog = require('../models/TimeLog.model');
+const TimeLog = require("../models/TimeLog.model");
 // const Statistics = require('../models/Statistics');
 const dayjs = require("dayjs");
 
 // Get weekly stats
-const getWeeklyStats = async (req, res) => {
+const getWeeklyStats = async (userId, date) => {
   try {
-    const { userId, date } = req.params;
-
     // Calculate the start date of the current week and the previous week
     const currentDate = new Date(date);
     const startOfCurrentWeek = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() - currentDate.getDay());
@@ -51,19 +49,19 @@ const getWeeklyStats = async (req, res) => {
     };
 
     // Format the data for the response
-    const currentWeekStats = sumTimeDurations(currentWeekTimeLogs).slice(0, dayOfWeekIndex + 1);
+    const currentWeekStats = sumTimeDurations(currentWeekTimeLogs);
     const previousWeekStats = sumTimeDurations(previousWeekTimeLogs);
 
-    res.status(200).json({ currentWeekStats, previousWeekStats });
+    return { currentWeekStats, previousWeekStats };
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error(error);
+    throw error;
   }
 };
 
 // Get monthly stats
-const getMonthlyStats = async (req, res) => {
+const getMonthlyStats = async (userId, date) => {
   try {
-    const { userId, date } = req.params;
 
     const currentDate = dayjs(date);
     const startOfCurrentMonth = currentDate.startOf("month");
@@ -99,8 +97,30 @@ const getMonthlyStats = async (req, res) => {
     // Format the data for the response
     const monthlyStats = sumTimeDurations(currentMonthTimeLogs);
 
-    res.status(200).json({ monthlyStats });
+    return ({ monthlyStats });
   } catch (error) {
+    console.error(error);
+    throw error;  }
+};
+
+// Get combined weekly and monthly stats
+const getAllStats = async (req, res) => {
+  try {
+    const { userId, date } = req.params;
+
+    // Use the provided date or default to the current date
+    const currentDate = date ? new Date(date) : new Date();
+
+    // Call the getWeeklyStats and getMonthlyStats functions
+    const weeklyStats = await getWeeklyStats(userId, currentDate);
+    const monthlyStats = await getMonthlyStats(userId, currentDate);
+
+    // Combine the results
+    const combinedStats = { weeklyStats, monthlyStats };
+
+    res.status(200).json(combinedStats);
+  } catch (error) {
+    console.log(error);
     res.status(500).json({ error: error.message });
   }
 };
@@ -108,4 +128,5 @@ const getMonthlyStats = async (req, res) => {
 module.exports = {
   getWeeklyStats,
   getMonthlyStats,
+  getAllStats,
 };

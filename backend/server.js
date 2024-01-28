@@ -4,6 +4,7 @@ const connectDB = require("./config/db");
 const path = require("path");
 const cors = require("cors");
 const { goalSchedule } = require("./jobs/goal.job");
+const { notificationSchedule } = require("./jobs/notification.job");
 
 dotenv.config({ path: "./config/config.env" });
 connectDB();
@@ -17,6 +18,7 @@ app.use(cors());
 
 // CRON JOBS
 goalSchedule();
+notificationSchedule();
 
 // ROUTES
 app.use("/api/users", require("./routes/user.route"));

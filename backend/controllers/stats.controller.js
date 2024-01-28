@@ -1,5 +1,6 @@
 const TimeLog = require('../models/TimeLog.model');
 // const Statistics = require('../models/Statistics');
+const dayjs = require("dayjs");
 
 // Get weekly stats
 const getWeeklyStats = async (req, res) => {
@@ -34,7 +35,6 @@ const getWeeklyStats = async (req, res) => {
     const dayOfWeekIndex = daysOfWeek.indexOf(curDayOfWeek);
 
     const sumTimeDurations = (timeLogs) => {
-
       // The stats of each day is currently set to  0
       const summedStats = Object.fromEntries(daysOfWeek.map(day => [day, 0]));
 
@@ -60,28 +60,44 @@ const getWeeklyStats = async (req, res) => {
   }
 };
 
-
-
 // Get monthly stats
 const getMonthlyStats = async (req, res) => {
   try {
     const { userId, date } = req.params;
 
-    // Calculate the start date of the current month
-    const currentDate = new Date(date);
-    const startOfCurrentMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+    const currentDate = dayjs(date);
+    const startOfCurrentMonth = currentDate.startOf("month");
 
     // Get time logs for the current month
     const currentMonthTimeLogs = await TimeLog.find({
       userId,
-      date: { $gte: startOfCurrentMonth, $lte: currentDate },
-    });
+      date: { $gte: startOfCurrentMonth.toDate(), $lte: currentDate.toDate() },
+    }).sort("date");
+
+    // Sum up time durations for the same day
+    const sumTimeDurations = (timeLogs) => {
+      const summedStats = {};
+
+      // Loop through the time logs and sum up the time durations of each day
+      timeLogs.forEach((timelog) => {
+        const day = dayjs(timelog.date).date();
+
+        if (!summedStats[day]) {
+          summedStats[day] = 0;
+        }
+
+        summedStats[day] += timelog.timeSpent;
+      });
+
+      // Convert the summed stats to the desired response format
+      return Object.entries(summedStats).map(([day, timeDuration]) => ({
+        day: parseInt(day),
+        timeDuration,
+      }));
+    };
 
     // Format the data for the response
-    const monthlyStats = currentMonthTimeLogs.map(timelog => ({
-      day: timelog.date.getDate(), // Use the day of the month as the identifier
-      timeDuration: timelog.timeSpent,
-    }));
+    const monthlyStats = sumTimeDurations(currentMonthTimeLogs);
 
     res.status(200).json({ monthlyStats });
   } catch (error) {

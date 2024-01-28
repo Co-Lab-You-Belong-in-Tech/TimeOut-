@@ -48,16 +48,20 @@ const getWeeklyStats = async (userId, date) => {
       }));
     };
 
+    // Calculate current week total
+    const currentWeekTotal = currentWeekTimeLogs.reduce((total, timelog) => total + timelog.timeSpent, 0);
+
     // Format the data for the response
     const currentWeekStats = sumTimeDurations(currentWeekTimeLogs);
     const previousWeekStats = sumTimeDurations(previousWeekTimeLogs);
 
-    return { currentWeekStats, previousWeekStats };
+    return {  currentWeekTotal, currentWeekStats, previousWeekStats};
   } catch (error) {
     console.error(error);
     throw error;
   }
 };
+
 
 // // Get monthly stats
 // const getMonthlyStats = async (userId, date) => {
@@ -162,10 +166,10 @@ const getAllStats = async (req, res) => {
 
     // Call the getWeeklyStats and getMonthlyStats functions
     const weeklyStats = await getWeeklyStats(userId, currentDate);
-    const monthlyStats = await getMonthlyStats(userId, currentDate);
+    const allMonthsStats = await getMonthlyStats(userId, currentDate);
 
     // Combine the results
-    const combinedStats = { weeklyStats, ...monthlyStats };
+    const combinedStats = { weeklyStats, allMonthsStats };
 
     res.status(200).json(combinedStats);
   } catch (error) {

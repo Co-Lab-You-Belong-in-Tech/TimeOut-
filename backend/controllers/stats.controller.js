@@ -116,7 +116,7 @@ const getAllStats = async (req, res) => {
     const monthlyStats = await getMonthlyStats(userId, currentDate);
 
     // Combine the results
-    const combinedStats = { weeklyStats, monthlyStats };
+    const combinedStats = { weeklyStats, ...monthlyStats };
 
     res.status(200).json(combinedStats);
   } catch (error) {

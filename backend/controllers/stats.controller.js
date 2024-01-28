@@ -24,10 +24,10 @@ const getWeeklyStats = async (userId, date) => {
     }).sort("date");
 
     // Sum up time durations for the same day
-    const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
     // current day of the week
-    const curDayOfWeek = new Date().toLocaleDateString('en-US', { weekday: 'long' });
+    const curDayOfWeek = new Date().toLocaleDateString('en-US', { weekday: 'short' });
 
     // Index of the current day of the week
     const dayOfWeekIndex = daysOfWeek.indexOf(curDayOfWeek);
@@ -38,7 +38,7 @@ const getWeeklyStats = async (userId, date) => {
 
       // Loop through the time logs and sum up the time durations of each day
       timeLogs.forEach((timelog) => {
-        const day = timelog.date.toLocaleDateString('en-US', { weekday: 'long' });
+        const day = timelog.date.toLocaleDateString('en-US', { weekday: 'short' });
         summedStats[day] += timelog.timeSpent;
       });
 

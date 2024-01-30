@@ -7,6 +7,8 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Profile from '../Screens/Profile';
 import StopWatch from '../Timer/Stopwatch';
 import { TabBarIndicator } from 'react-native-tab-view';
+import { Ionicons } from '@expo/vector-icons'; // You can use any icon library you prefer
+
 
 
 const Tab = createBottomTabNavigator()
@@ -16,15 +18,20 @@ const Tabs = () => {
   return (
     <Tab.Navigator 
         screenOptions={{
-          tabBarActiveTintColor:'#4C5F3A',
-          tabBarInactiveTintColor:'#192111',
+          tabBarActiveTintColor:'#354228',
+          tabBarInactiveTintColor:'82877d',
           headerShown: false,
           tabBarShowLabel: false,
           tabBarIndicatorStyle: {
-            backgroundColor:'#4C5F3A',
+            backgroundColor:'#354228',
             
           }, 
-          TabBarIndicator:true
+          TabBarIndicator:true,
+          tabBarStyle:{
+            backgroundColor:'#F6F5F3',
+            maxHeight:'auto'
+          }
+          
         }}>
           <Tab.Screen 
             name='Stopwatch' 
@@ -38,11 +45,11 @@ const Tabs = () => {
                     style={{
                       width:20,
                       height: 20,
-                      tintColor: focused ? '#4C5F3A' : 'grey',
+                      tintColor: focused ? '#354228' : '#82877d',
                     }}
                   />
                   <Text
-                  style={{color: focused? '#4C5F3A' : 'grey', fontSize:14}}>
+                  style={{color: focused? '#4C5F3A' : '#82877d', fontSize:14}}>
                     Stopwatch</Text>
                 </View>
               )
@@ -59,11 +66,11 @@ const Tabs = () => {
                   style={{
                     width:20,
                     height: 20,
-                    tintColor: focused ? '#4C5F3A' : 'grey',
+                    tintColor: focused ? '#354228' : '#82877d',
                   }}
                 />
                 <Text
-                style={{color: focused? '#4C5F3A' : 'grey', fontSize:14}}>
+                style={{color: focused? '#354228' : '#82877d', fontSize:14}}>
                   Statistics</Text>
               </View>
             )
@@ -87,7 +94,7 @@ const Tabs = () => {
                   }}
                 /> 
                 <Text
-                style={{color: focused? '#4C5F3A' : 'grey', fontSize:14}}>
+                style={{color: focused? '#354228' : '#82877d', fontSize:14}}>
                   Goals</Text>
               </View>
               :
@@ -102,7 +109,7 @@ const Tabs = () => {
               }}
             /> 
             <Text
-            style={{color: focused? '#4C5F3A' : 'grey', fontSize:14}}>
+            style={{color: focused? '#354228' : '#82877d', fontSize:14}}>
               Goals</Text>
               </View>
             )
@@ -126,7 +133,7 @@ const Tabs = () => {
                   }}
                 /> 
                 <Text
-                style={{color: focused? '#4C5F3A' : 'grey', fontSize:14}}>
+                style={{color: focused? '#354228' : '#82877d', fontSize:14}}>
                   Profile</Text>
               </View>
               :
@@ -141,7 +148,7 @@ const Tabs = () => {
               }}
             /> 
             <Text
-            style={{color: focused? '#4C5F3A' : 'grey', fontSize:14}}>
+            style={{color: focused? '#354228' : '#82877d', fontSize:14}}>
               Profile</Text>
               </View>
             )

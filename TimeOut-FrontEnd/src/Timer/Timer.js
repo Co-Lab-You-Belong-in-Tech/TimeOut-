@@ -19,11 +19,15 @@ const Home = () => {
       tabBarStyle:{
         justifyContent:"center",
         backgroundColor:'#F6F5F3',
-        width:'50%',
-        display:'flex',
+        width:'60%',
+        
         marginLeft:'auto',
         marginRight:'auto',
         capitalized: false,
+        minWidth:'auto',
+        maxWidth:'auto',
+        elevation:0,
+        shadowOpacity:0
         
       },
       tabBarIndicatorStyle: {

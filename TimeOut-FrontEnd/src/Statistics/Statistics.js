@@ -31,7 +31,7 @@ const Statistics = () => {
       },
       tabBarIndicatorStyle: {
         backgroundColor:'#4C5F3A',
-        height:'100%',
+        height:'7%',
         position:'absolute'
       },
       tabBarIndicatorContainerStyle:{

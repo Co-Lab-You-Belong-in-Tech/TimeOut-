@@ -190,7 +190,7 @@ const getCurrentMonth = () => {
         />
       }
     >
-      <SafeAreaView style={{ flex: 1 }}>
+      <SafeAreaView style={{ flex: 1, backgroundColor:'#F6F5F3', }}>
         <View style={{ flex: 1 }}>
           <View style={{ padding: 20, width: "100%" }}>
             <Text>Progress</Text>

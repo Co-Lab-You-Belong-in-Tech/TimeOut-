@@ -32,6 +32,53 @@ const Goals = () => {
       }
       closeModal();
     };
+
+
+    const handleSubmit = async () => {
+      try {
+        // Retrieve userId from AsyncStorage
+        const userId = await AsyncStorage.getItem('userId');
+  
+        // Check if userId exists
+        if (userId) {
+          const durationInSeconds = selectedDuration * 60;
+          // Construct timelog data
+          const timelogData = {
+            userId: userId,
+            date: selectedStartDate,
+            startTime: selectedTimeData,
+            timeSpent: selectedTimeDurationData
+  
+          };
+          console.log(timelogData)
+          // Post timelog data to the backend
+          const timelogResponse = await fetch(`https://timeout-api.onrender.com/api/timelogs/`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(timelogData), timeSpent: selectedDuration
+          });
+          // Check if timelog data was posted successfully
+          if (timelogResponse.ok) {
+            console.log('Timelog data posted successfully');
+            // Clear selected data
+            setSelectedStartDate(null);
+            setSelectedTime("");
+            setSelectedDuration("");
+          } else {
+            console.error('Failed to post timelog data');
+          }
+        } else {
+          console.error('User ID not found in AsyncStorage');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    };
+
+
+
     return (
       <Modal animationType="slide" transparent={true} visible={isVisible} >
         {/* Modal Content for TimePicker */}
@@ -86,7 +133,7 @@ const Goals = () => {
 
   return (
 
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={{ flex: 1,backgroundColor:'#F6F5F3' }}>
       <View style={{ flex: 1, alignItems: "center" }}>
         <View style={{ padding: 20, width: "100%"}}>
           <Text style={{ fontSize: 34, fontWeight: 300 }}>
@@ -288,14 +335,14 @@ const styles = StyleSheet.create({
   },
   confirmButton: {
 
-
+    margin:20,
 
 
     opacity: 1,
   },
   confirmButtonText: {
     color: '#4C5F3A',
-    fontSize: 18,
+    fontSize: 25,
   },
   disabledButton: {
     backgroundColor: '#ccc', // Change the color for the disabled state

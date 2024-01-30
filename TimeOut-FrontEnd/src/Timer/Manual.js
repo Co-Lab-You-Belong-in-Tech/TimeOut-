@@ -315,7 +315,7 @@ const Manual = () => {
 
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={{ flex: 1,backgroundColor:'#F6F5F3' }}>
 
       <View style={{ flex: 1, alignItems: "center" }}>
 
@@ -392,13 +392,17 @@ const Manual = () => {
                   borderColor: "white",
                 }}
               />
-
+              <View style={{flexDirection:'row', }}>
+                <View style={{flexDirection:'row', justifyContent:'space-between'}}>
+              
+              <TouchableOpacity onPress={handleClearDate} style={{marginRight:50}}>
+                <Text style={{ color: "black", fontSize:20,  }}>Clear</Text>
+              </TouchableOpacity>
               <TouchableOpacity onPress={handleOnPressStartDate}>
-                <Text style={{ color: "black" }}>Close</Text>
+                <Text style={{ color: "black", fontSize:20, }}>Close</Text>
               </TouchableOpacity>
-              <TouchableOpacity onPress={handleClearDate}>
-                <Text style={{ color: "black" }}>Clear</Text>
-              </TouchableOpacity>
+              </View>
+              </View>
             </View>
 
           </View>
@@ -554,25 +558,25 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 5,
     marginRight: 10,
-    backgroundColor: '#3498db',
+    backgroundColor: '#87947B',
   },
   selectedPeriodButton: {
-    backgroundColor: '#2980b9',
+    backgroundColor: '#87947B1C',
   },
   periodText: {
-    color: 'white',
+    color: '#192111',
     fontSize: 16,
   },
   confirmButton: {
 
-
-
+    margin:20,
+    fontSize:50,
 
     opacity: 1,
   },
   confirmButtonText: {
     color: '#4C5F3A',
-    fontSize: 18,
+    fontSize: 25,
   },
   disabledButton: {
     backgroundColor: '#ccc', // Change the color for the disabled state

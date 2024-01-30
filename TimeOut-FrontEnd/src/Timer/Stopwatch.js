@@ -1,5 +1,5 @@
-import  React, { useState, useRef, useCallback, useEffect } from "react";
-import { StyleSheet, SafeAreaView, Text, View, Platform, Button } from "react-native";
+import React, { useState, useRef, useCallback, useEffect } from "react";
+import { StyleSheet, SafeAreaView, Text, View, Platform, Button, Image, TouchableOpacity } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import Constants from "expo-constants";
 import Result from "./Result";
@@ -7,6 +7,7 @@ import Control from "./Control";
 import { displayTime } from "./Util";
 import { useNavigation } from '@react-navigation/native';
 import * as BackgroundFetch from 'expo-background-fetch';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
 
@@ -33,10 +34,18 @@ export default function StopWatch() {
   }
 
   // Register the background fetch task
- 
 
-  const handleStartStop = () => {
+  const handleLeftButtonPress = useCallback(async () => {
+    setRunning(false);
+    setTime(0);
+    await saveTimeToStorage()
+
+
+  }, []);
+
+  const handleStartStop = async () => {
     setRunning(prevState => !prevState);
+    await saveDataIfNeeded()
   };
 
   const handleReset = () => {
@@ -44,14 +53,168 @@ export default function StopWatch() {
     setRunning(false);
   };
 
+  const saveDataIfNeeded = async () => {
+    try {
+      // Check if data exists for 'date' and 'startTime'
+      const dateData = await AsyncStorage.getItem('date');
+      const startTimeData = await AsyncStorage.getItem('startTime');
+
+      // If data doesn't exist, save current time and date
+      if (!dateData) {
+        const currentDate = new Date().toISOString().substring(0, 10); // Get current date in YYYY-MM-DD format
+        await AsyncStorage.setItem('date', currentDate);
+      }
+
+      if (!startTimeData) {
+        const currentTime = new Date();
+        const hours = currentTime.getHours().toString().padStart(2, '0'); // Ensure two digits for hours
+        const minutes = currentTime.getMinutes().toString().padStart(2, '0'); // Ensure two digits for minutes
+        const formattedTime = `${hours}:${minutes}`;
+        await AsyncStorage.setItem('startTime', formattedTime);
+        console.log(formattedTime)
+        console.log(currentTime)
+      }
+      
+      // If data exists, do nothing
+    } catch (error) {
+      console.error('Error saving data:', error);
+      console.log(`already exists${startTimeData}`)
+
+    }
+  };
+  const saveTimeToStorage = async () => {
+    try{
+    const endTime = new Date();
+    const hours = endTime.getHours().toString().padStart(2, '0'); // Ensure two digits for hours
+    const minutes = endTime.getMinutes().toString().padStart(2, '0'); // Ensure two digits for minutes
+    const formattedTime = `${hours}:${minutes}`;
+
+    const startTime = await AsyncStorage.getItem('startTime');
+    const currentDate = await AsyncStorage.getItem('date')
+
+    // Parse the times into hours and minutes
+    const [hours1, minutes1] = startTime.split(':').map(Number);
+    const [hours2, minutes2] = formattedTime.split(':').map(Number);
+
+    // Convert the times to minutes
+    const totalMinutes1 = hours1 * 60 + minutes1;
+    const totalMinutes2 = hours2 * 60 + minutes2;
+
+    // Calculate the difference in minutes
+    const differenceInMinutes = totalMinutes2 - totalMinutes1;
+
+    console.log(differenceInMinutes)
+    const userId = await AsyncStorage.getItem('userId');
+
+    console.log(currentDate);
+    // Send data to backend
+    const timelogData = {
+      userId: userId,
+      date: currentDate,
+      startTime: startTime,
+      timeSpent: differenceInMinutes
+    }
+    // Implement your logic to send data to the backend
+    const timelogResponse = await fetch(`https://timeout-api.onrender.com/api/timelogs/`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(timelogData), timeSpent: differenceInMinutes
+        });
+        if (timelogResponse.ok) {
+          console.log('Timelog data posted successfully');
+          // Clear selected data
+          
+        } else {
+          console.error('Failed to post timelog data');
+        }
+      } catch(error){
+        console.log(error)
+      }
+    // Clear start time from storage
+    await AsyncStorage.removeItem('startTime');
+    await AsyncStorage.removeItem('date');
+    console.log(AsyncStorage.getAllKeys())
+    
+  };
+
+  // Define your sendDataToBackend function to send data to the backend
+  const sendDataToBackend = async(date, startTime, timeSpent, userId) => {
+    
+    console.log(`Sending data to backend - Date: ${date}, StartTime: ${startTime}, TimeSpent: ${timeSpent}, UserId: ${userId}`);
+  };
+
+
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.timer}>{formatTime(time)}</Text>
-      <View style={styles.buttons}>
-        <Button title={isRunning ? 'Stop' : 'Start'} onPress={handleStartStop} />
-        <Button title="Reset" onPress={handleReset} />
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#F6F5F3', }}>
+      <View style={styles.container}>
+        <Text style={styles.timer}>{formatTime(time)}</Text>
       </View>
-    </View>
+      <View style={{ flex: 1, justifyContent: 'flex-end', marginBottom: 10 }}>
+        <View style={styles.buttons}>
+          <TouchableOpacity
+
+            onPress={handleLeftButtonPress}
+          >
+            {isRunning ?
+              <View>
+                <Image source={require('../../assets/Stop.png')}
+                  style={{
+                    width: 45,
+                    height: 45
+
+                  }} />
+              </View>
+              :
+              <View>
+
+              </View>}
+
+          </TouchableOpacity>
+          <TouchableOpacity onPress={handleStartStop} >
+            {isRunning ?
+              <View >
+
+                <Image source={require('../../assets/Pause.png')}
+                  style={{
+                    width: 105,
+                    height: 105
+
+                  }} />
+              </View>
+              :
+              <View>
+                <Image source={require('../../assets/Play-Button.png')}
+                  style={{
+                    width: 105,
+                    height: 105
+
+                  }}
+                />
+              </View>}</TouchableOpacity>
+          <TouchableOpacity
+            onPress={handleReset}
+          >
+            {isRunning ?
+              <View>
+                <Image source={require('../../assets/Reset.png')}
+                  style={{
+                    width: 45,
+                    height: 45
+
+                  }} />
+              </View>
+              :
+              <View>
+
+              </View>}
+          </TouchableOpacity>
+        </View>
+      </View>
+
+    </SafeAreaView >
   );
 }
 
@@ -60,7 +223,7 @@ const formatTime = (seconds) => {
   const remainingSeconds = seconds % 3600;
   const mins = Math.floor(remainingSeconds / 60);
   const secs = remainingSeconds % 60;
-  
+
   const formattedHours = hours < 10 ? '0' + hours : hours;
   const formattedMins = mins < 10 ? '0' + mins : mins;
   const formattedSecs = secs < 10 ? '0' + secs : secs;
@@ -77,13 +240,21 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+
   },
   timer: {
-    fontSize: 40,
-    marginBottom: 20,
+    fontSize: 90,
+    fontWeight: 100,
+    color: '#364329',
+    marginTop: 150
+
   },
   buttons: {
     flexDirection: 'row',
+    justifyContent: "center",
+    alignContent: "center",
+    alignItems: 'center',
+    bottom: 0
   },
 });
 
